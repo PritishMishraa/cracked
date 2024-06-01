@@ -1,0 +1,35 @@
+name: Fetch Daily Submissions
+
+on:
+  schedule:
+    - cron: '55 23 * * *' 
+  workflow_dispatch:
+
+jobs:
+  fetch-submissions:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate Markdown File
+        id: generate_markdown
+        run: |
+          npx tsx generateMarkdown.ts
+
+      - name: Commit and Push
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          git commit -m 'Update daily submissions'
+          git push
