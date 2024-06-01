@@ -1,0 +1,45 @@
+---
+import { format } from "date-fns";
+
+const posts = await Astro.glob("../pages/*.md");
+const { pathname } = Astro.url;
+
+posts.sort((a, b) => {
+    const dateA = new Date(a.frontmatter.date);
+    const dateB = new Date(b.frontmatter.date);
+
+    if (dateA < dateB) {
+        return 1;
+    }
+    if (dateA > dateB) {
+        return -1;
+    }
+    return 0;
+});
+
+const nav = posts.map((post) => {
+    const dateString = format(new Date(post.frontmatter.date), "do LLL, yyyy");
+    const title: string = post.frontmatter.photo ? post.frontmatter.title : dateString;
+    const url = post.url;
+    return { title, url };
+});
+
+---
+
+<div
+    class="flex whitespace-nowrap justify-start gap-x-4 items-start md:flex-col md:gap-y-2 md:justify-start md:items-start overflow-y-scroll"
+>
+    {
+        nav && nav.map((n) => (
+            <a
+                href={n.url}
+                class={`text-lg ${pathname === n.url ? "bg-[#F4F4F5]" : ""} hover:bg-[#F4F4F5] px-2 py-1 rounded-lg`}
+            >
+                {n.title}
+            </a>
+        ))
+    }
+    <!-- <a>
+        <img src="/moon.svg" alt="moon-icon" class="text-black text-lg">
+    </a> -->
+</div>

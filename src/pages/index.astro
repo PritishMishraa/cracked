@@ -1,0 +1,51 @@
+---
+import Layout from "../layouts/main.astro";
+
+let content = {
+	title: "Pritish Is Getting Cracked",
+};
+
+const socialLinks = [
+	{
+		title: "github",
+		url: "https://github.com/PritishMishraa/",
+	},
+	{
+		title: "linkedin",
+		url: "https://www.linkedin.com/in/pritish-mishra-3118621bb/",
+	},
+	{
+		title: "twitter",
+		url: "https://x.com/PritishhMishraa",
+	},
+];
+---
+
+<Layout content={content} summary="Introduction of the blog">
+	<div class="flex flex-col gap-y-4">
+		<h2 class="text-xl font-bold">I'm Pritish and I want to be Cracked on Algos</h2>
+		<p>
+			Welcome to my little corner of the internet where I document my
+			experiments.
+		</p>
+		<p>
+			Well, not technically a cracked, but go up to <span class="text-[#AC48F5]">Candidate Master</span>.
+		</p>
+		<ul class="mb-2 list-none">
+			{
+				socialLinks.map((link) => (
+					<li>
+						-
+						<a
+							href={link.url}
+							class="text-blue-600"
+							target="_blank"
+						>
+							{link.title}
+						</a>
+					</li>
+				))
+			}
+		</ul>
+	</div>
+</Layout>

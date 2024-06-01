@@ -1,0 +1,50 @@
+---
+import "../styles/globals.css";
+import Links from "../components/Links.astro";
+import { ViewTransitions } from "astro:transitions";
+
+const { content, summary, nav } = Astro.props;
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="description" content={summary} />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<title>{content?.title}</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap"
+			rel="stylesheet"
+		/>
+		<ViewTransitions />
+		<style>
+			body {
+				font-family: "Roboto Mono", monospace;
+				font-optical-sizing: auto;
+				font-style: normal;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div
+			class="px-6 mt-10 mx-auto flex flex-col gap-y-6 md:flex md:flex-row md:max-w-4xl md:mt-20 md:items-start pb-2"
+		>
+			<div class="flex flex-col gap-y-6 gap-x-6 md:max-w-[12rem] w-full">
+				<div
+					class="flex justify-center items-center md:justify-start md:items-start"
+				>
+					<a class="text-xs px-2" href="/"
+						>Project<br>
+						<span class="font-bold text-xl tracking-widest"> CRACKED </span>
+					</a>
+				</div>
+				<Links nav={nav} />
+			</div>
+			<slot />
+		</div>
+	</body>
+</html>
