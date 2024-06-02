@@ -33,7 +33,7 @@ const nav = posts.map((post) => {
         nav && nav.map((n) => (
             <a
                 href={n.url}
-                class={`text-lg ${pathname === n.url ? "bg-[#F4F4F5]" : ""} hover:bg-[#F4F4F5] px-2 py-1 rounded-lg`}
+                class={`text-lg ${decodeURI(pathname) === n.url ? "bg-[#F4F4F5]" : ""} hover:bg-[#F4F4F5] px-2 py-1 rounded-lg`}
             >
                 {n.title}
             </a>
