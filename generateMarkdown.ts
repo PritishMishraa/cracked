@@ -43,7 +43,7 @@ interface CodeforcesSubmission {
 class Logger {
     log(level: string, message: string): void {
         const timestamp = new Date().toDateString();
-        console.log(`[${timestamp}] [${level.toUpperCase()}]: ${message}`);
+        console.log(`[${timestamp}] [${level.toUpperCase()}]: ${message}\n`);
     }
 
     info(message: string) {
@@ -106,24 +106,25 @@ const getTodaySubmission = async () => {
     const now = new Date();
     const offset = 5.5 * 60 * 60 * 1000;
     const today = new Date(now.getTime() + offset);
+    const yesterday = today.getDate() - 1;
 
     logger.info("Filtering today's LeetCode submissions");
-    let leetcodeTodaySubmissions = leetcodeSubmissions.filter(submission => new Date(submission.timestamp * 1000).getDate() == today.getDate() - 1);
+    let leetcodeTodaySubmissions = leetcodeSubmissions.filter(submission => new Date(submission.timestamp * 1000).getDate() == yesterday);
     let limit = 10;
     while (leetcodeSubmissions.length != 0 && (leetcodeTodaySubmissions.length === leetcodeSubmissions.length)) {
         logger.info(`All fetched LeetCode submissions are from today, increasing limit to ${limit + 10}`);
         leetcodeSubmissions = await getLeetcodeSubmissions(limit + 10);
-        leetcodeTodaySubmissions = leetcodeSubmissions.filter(submission => new Date(submission.timestamp * 1000).getDate() == today.getDate() - 1);
+        leetcodeTodaySubmissions = leetcodeSubmissions.filter(submission => new Date(submission.timestamp * 1000).getDate() == yesterday);
         limit += 10;
     }
 
     logger.info("Filtering today's Codeforces submissions");
-    let codeforcesTodaySubmissions = codeforcesSubmissions.filter(submission => new Date(submission.creationTimeSeconds * 1000).getDate() == today.getDate() - 1);
+    let codeforcesTodaySubmissions = codeforcesSubmissions.filter(submission => new Date(submission.creationTimeSeconds * 1000).getDate() == yesterday);
     limit = 10;
     while (codeforcesSubmissions.length !== 0 && (codeforcesTodaySubmissions.length === codeforcesSubmissions.length)) {
         logger.info(`All fetched Codeforces submissions are from today, increasing limit to ${limit + 10}`);
         codeforcesSubmissions = await getCodeforcesSubmission(limit + 10);
-        codeforcesTodaySubmissions = codeforcesSubmissions.filter(submission => new Date(submission.creationTimeSeconds * 1000).getDate() == today.getDate() - 1);
+        codeforcesTodaySubmissions = codeforcesSubmissions.filter(submission => new Date(submission.creationTimeSeconds * 1000).getDate() == yesterday);
         limit += 10;
     }
 
