@@ -57,6 +57,11 @@ class Logger {
     error(message: string) {
         this.log('error', message);
     }
+
+    time() {
+        const timestamp = new Date().toTimeString();
+        this.log('time', timestamp);
+    }
 }
 
 const logger = new Logger();
@@ -94,7 +99,7 @@ async function getCodeforcesSubmission(limit = 10): Promise<CodeforcesSubmission
 
 const getTodaySubmission = async () => {
     logger.info("Getting today's submissions from LeetCode and Codeforces");
-    
+
     let leetcodeSubmissions = await getLeetcodeSubmissions();
     let codeforcesSubmissions = await getCodeforcesSubmission();
 
@@ -103,22 +108,22 @@ const getTodaySubmission = async () => {
     const today = new Date(now.getTime() + offset);
 
     logger.info("Filtering today's LeetCode submissions");
-    let leetcodeTodaySubmissions = leetcodeSubmissions.filter(submission => new Date(submission.timestamp * 1000).getDate() == today.getDate());
+    let leetcodeTodaySubmissions = leetcodeSubmissions.filter(submission => new Date(submission.timestamp * 1000).getDate() == today.getDate() - 1);
     let limit = 10;
     while (leetcodeSubmissions.length != 0 && (leetcodeTodaySubmissions.length === leetcodeSubmissions.length)) {
         logger.info(`All fetched LeetCode submissions are from today, increasing limit to ${limit + 10}`);
         leetcodeSubmissions = await getLeetcodeSubmissions(limit + 10);
-        leetcodeTodaySubmissions = leetcodeSubmissions.filter(submission => new Date(submission.timestamp * 1000).getDate() == today.getDate());
+        leetcodeTodaySubmissions = leetcodeSubmissions.filter(submission => new Date(submission.timestamp * 1000).getDate() == today.getDate() - 1);
         limit += 10;
     }
 
     logger.info("Filtering today's Codeforces submissions");
-    let codeforcesTodaySubmissions = codeforcesSubmissions.filter(submission => new Date(submission.creationTimeSeconds * 1000).getDate() == today.getDate());
+    let codeforcesTodaySubmissions = codeforcesSubmissions.filter(submission => new Date(submission.creationTimeSeconds * 1000).getDate() == today.getDate() - 1);
     limit = 10;
     while (codeforcesSubmissions.length !== 0 && (codeforcesTodaySubmissions.length === codeforcesSubmissions.length)) {
         logger.info(`All fetched Codeforces submissions are from today, increasing limit to ${limit + 10}`);
         codeforcesSubmissions = await getCodeforcesSubmission(limit + 10);
-        codeforcesTodaySubmissions = codeforcesSubmissions.filter(submission => new Date(submission.creationTimeSeconds * 1000).getDate() == today.getDate());
+        codeforcesTodaySubmissions = codeforcesSubmissions.filter(submission => new Date(submission.creationTimeSeconds * 1000).getDate() == today.getDate() - 1);
         limit += 10;
     }
 
@@ -128,14 +133,20 @@ const getTodaySubmission = async () => {
 }
 
 const generateMarkdown = async () => {
-    logger.info("Generating markdown for today's submissions");
+    logger.time();
+
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    logger.info(`Generating markdown for ${yesterday.toDateString()} submissions`);
+    
     const { leetcodeTodaySubmissions, codeforcesTodaySubmissions } = await getTodaySubmission();
 
     let markdown =
         `---
-title: ${new Date().toDateString()}
+title: ${yesterday.toDateString()}
 layout: ../layouts/blogLayout.astro
-date: ${new Date().toISOString()}
+date: ${yesterday.toISOString()}
 summary: ${leetcodeTodaySubmissions.length + codeforcesTodaySubmissions.length} submissions today
 ---
 
@@ -159,7 +170,7 @@ summary: ${leetcodeTodaySubmissions.length + codeforcesTodaySubmissions.length} 
 </ul>`;
 
     try {
-        const filePath = `src/pages/${new Date().toDateString()}.md`;
+        const filePath = `src/pages/${yesterday.toDateString()}.md`;
         await writeFile(filePath, markdown);
         logger.info(`Markdown file successfully generated at ${filePath}`);
     } catch (error) {
